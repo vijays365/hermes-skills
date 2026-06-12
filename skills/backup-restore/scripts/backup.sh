@@ -40,7 +40,11 @@ for src in "${SOURCES[@]}"; do
 done
 
 echo "Creating tarball..."
-tar czf "${TARBALL}" "${EXCLUDES[@]}" "${SOURCES[@]}" 2>/dev/null
+# Use -C for relative paths so tarball is portable
+PARENT_DIR="$(cd "$(dirname "${REPO_DIR}")" && pwd)"
+BASE_NAME="$(basename "${REPO_DIR}")"
+tar czf "${TARBALL}" "${EXCLUDES[@]}" -C "${PARENT_DIR}" \
+  "${SOURCES[@]#${PARENT_DIR}/}" 2>/dev/null
 
 echo "Writing manifest..."
 {
